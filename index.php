@@ -4,21 +4,12 @@ include("conexion.php");
 $api_key = 'oFmxwMtykNb0JUSixtzH1XpmLvyeD5qS';
 $base_url = "https://api.giphy.com/v1/gifs/search";
 
-$search_query = 'energy-vide-plus-de-batterie-RKZP30PjHxo8vkPayR';
-$url = "$base_url?q=" . urlencode($search_query) . "&api_key=$api_key";
+$search_query = [
+    0 => 'art-typography-alphabet-hgBrc2DZ7d1TM60Lun',
+    1 => 'aminalstickers-ok-okay-purple-Qu6WPG7U9zkXNyiqAP',
+    2 => 'NeighborlyNotaryNYC-level-high-2sMspqFaTy4syGc59M',
+];
 
-$response = file_get_contents($url);
-
-$gif_data = json_decode($response);
-
-$imgGiphy = '';
-
-if ($gif_data && $gif_data->data && count($gif_data->data) > 0) {
-    $gif_url = $gif_data->data[0]->images->fixed_height->url;
-    $imgGiphy = "<img src='$gif_url' alt='GIF'>";
-} else {
-    echo "No se encontraron GIFs para tu búsqueda.";
-}
 
 ?>
 <!DOCTYPE html>
@@ -152,8 +143,21 @@ if ($gif_data && $gif_data->data && count($gif_data->data) > 0) {
                                 echo '<span class="label label-danger">Alto</span>';
                             }
                             echo '
-							</td>
-							<td>' . $imgGiphy . '</td>
+							</td>';
+
+                            $i = $row['level'];
+                            $url = "$base_url?q=" . urlencode($search_query[$i]) . "&api_key=$api_key";
+                            $response = file_get_contents($url);
+                            $gif_data = json_decode($response);
+
+                            if ($gif_data && $gif_data->data && count($gif_data->data) > 0) {
+                                $gif_url = $gif_data->data[0]->images->fixed_height->url;
+                                $imgGiphy = "<img src='$gif_url' alt='GIF'>";
+                            } else {
+                                echo "No se encontraron GIFs para tu búsqueda.";
+                            }
+
+                            echo '<td>' . $imgGiphy . '</td>
 							<td>';
                             if ($row['state'] == '0') {
                                 echo '<span class="label label-success">Incompleto</span>';
